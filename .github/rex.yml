@@ -1,0 +1,9 @@
+labels:
+  blockers:
+    - "status/ON-HOLD"
+    - "status/WIP"
+  requirements:
+    - "area/"
+    - "kind/"
+    - "tribe/"
+    - "status/OK-TO-MERGE"
