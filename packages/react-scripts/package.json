@@ -1,12 +1,8 @@
 {
-  "name": "react-scripts",
-  "version": "3.0.1",
-  "description": "Configuration and scripts for Create React App.",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/facebook/create-react-app.git",
-    "directory": "packages/react-scripts"
-  },
+  "name": "@prontopro/react-scripts",
+  "version": "3.0.1-prontopro1",
+  "description": "ProntoPro configuration and scripts for Create React App.",
+  "repository": "facebook/create-react-app",
   "license": "MIT",
   "engines": {
     "node": ">=8.10"
@@ -52,6 +48,7 @@
     "eslint-plugin-react-hooks": "^1.5.0",
     "file-loader": "3.0.1",
     "fs-extra": "7.0.1",
+    "get-yarn-workspaces": "1.0.0",
     "html-webpack-plugin": "4.0.0-beta.5",
     "identity-obj-proxy": "3.0.0",
     "is-wsl": "^1.1.0",

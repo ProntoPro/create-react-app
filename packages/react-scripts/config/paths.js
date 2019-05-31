@@ -18,6 +18,11 @@ const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 
 const envPublicUrl = process.env.PUBLIC_URL;
+// ! prontopro-scripts start
+const envBuildFolderName = process.env.PP_ENVIRONMENT
+  ? `build_${process.env.PP_ENVIRONMENT}`
+  : 'build';
+// ! prontopro-scripts end
 
 function ensureSlash(inputPath, needsSlash) {
   const hasSlash = inputPath.endsWith('/');
@@ -100,7 +105,10 @@ const resolveOwn = relativePath => path.resolve(__dirname, '..', relativePath);
 module.exports = {
   dotenv: resolveApp('.env'),
   appPath: resolveApp('.'),
-  appBuild: resolveApp('build'),
+  // ! prontopro-scripts start
+  // appBuild: resolveApp('build'),
+  appBuild: resolveApp(envBuildFolderName),
+  // ! prontopro-scripts end
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
   appIndexJs: resolveModule(resolveApp, 'src/index'),
