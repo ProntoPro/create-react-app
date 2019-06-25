@@ -1,5 +1,6 @@
 repository:
   name: create-react-app
+  description: ProntoPro create-react-app fork
   private: true
   default_branch: develop
   has_issues: true
