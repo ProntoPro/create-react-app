@@ -1,0 +1,17 @@
+clone:
+  git:
+    image: plugins/git:next
+
+pipeline:
+  publish:
+    image: prontopro/node:10.15.3-1-dev
+    commands:
+      - cd packages/react-scripts
+      - yarn
+      - echo "//registry.npmjs.org/:_authToken=${NPM_API_KEY}" > ~/.npmrc
+      - npm publish --access=public
+    when:
+      branch:
+        - prontopro-react-scripts@2.1.1
+      event:
+        - tag
