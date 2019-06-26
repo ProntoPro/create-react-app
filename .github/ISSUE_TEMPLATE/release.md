@@ -1,1 +1,1 @@
-Release issue for the milestone [](https://github.com/ProntoPro/frontend/milestone/).
+Release issue for the milestone [](https://github.com/ProntoPro/create-react-app/milestone/).

@@ -21,7 +21,7 @@ repository:
 #     permission: pull
 
 branches:
-  - name: master
+  - name: prontopro-react-scripts@2.1.1
     protection:
       required_pull_request_reviews:
         # Still in alpha
@@ -46,7 +46,7 @@ branches:
         teams:
           - teamleaders
 
-  - name: develop
+  - name: master
     protection:
       required_pull_request_reviews:
         # Still in alpha
@@ -65,34 +65,11 @@ branches:
           - ProntoPro/rex/pr/milestone
       enforce_admins: true
       restrictions:
-        users: []
+        users:
+          - omissis
+          - filipposarzana
         teams:
-          - backend
-          - frontend
-
-  - name: release/*
-    protection:
-      required_pull_request_reviews:
-        # Still in alpha
-        # required_approving_review_count: 1
-        dismiss_stale_reviews: false
-        require_code_owner_reviews: true
-        dismissal_restrictions:
-          users: []
-          teams: []
-      required_status_checks:
-        strict: true
-        contexts:
-          - continuous-integration/drone/pr
-          - continuous-integration/drone/push
-          - ProntoPro/rex/pr/labels
-          - ProntoPro/rex/pr/milestone
-      enforce_admins: true
-      restrictions:
-        users: []
-        teams:
-          - backend
-          - frontend
+          - teamleaders
 
 labels:
   - name: "tribe/CORE :dart:"
