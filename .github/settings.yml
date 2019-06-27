@@ -1,10 +1,9 @@
 repository:
   name: create-react-app
   description: ProntoPro create-react-app fork
-  private: true
-  default_branch: develop
+  default_branch: prontopro-react-scripts@2.1.1
   has_issues: true
-  has_wiki: true
+  has_wiki: false
   has_downloads: false
   allow_squash_merge: false
   allow_merge_commit: true
@@ -39,6 +38,7 @@ branches:
       enforce_admins: false
       restrictions:
         users:
+          - zuc
           - omissis
           - filipposarzana
         teams:
@@ -61,9 +61,10 @@ branches:
           - continuous-integration/drone/push
           - ProntoPro/rex/pr/labels
           - ProntoPro/rex/pr/milestone
-      enforce_admins: true
+      enforce_admins: false
       restrictions:
         users:
+          - zuc
           - omissis
           - filipposarzana
         teams:
