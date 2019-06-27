@@ -5,12 +5,11 @@ clone:
 pipeline:
   publish:
     image: plugins/npm
-    settings:
-      username: michaelgenesini
-      password:
-        from_secret: NPM_API_KEY
-      email: michael.genesini@prontopro.it
-      folder: packages/react-scripts
+    folder: packages/react-scripts
+    username: michaelgenesini
+    email: michael.genesini@prontopro.it
+    secrets:
+      - NPM_TOKEN
     when:
       branch:
         - prontopro-react-scripts@2.1.1
