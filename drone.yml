@@ -4,12 +4,13 @@ clone:
 
 pipeline:
   publish:
-    image: prontopro/node:10.15.3-1-dev
-    commands:
-      - cd packages/react-scripts
-      - yarn
-      - echo "//registry.npmjs.org/:_authToken=${NPM_API_KEY}" > ~/.npmrc
-      - npm publish --access=public
+    image: plugins/npm
+    settings:
+      username: michaelgenesini
+      password:
+        from_secret: NPM_API_KEY
+      email: michael.genesini@prontopro.it
+      folder: packages/react-scripts
     when:
       branch:
         - prontopro-react-scripts@2.1.1
