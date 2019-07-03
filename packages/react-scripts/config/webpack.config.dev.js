@@ -8,6 +8,10 @@
 // @remove-on-eject-end
 'use strict';
 
+// ! prontopro-scripts start
+const getWorkspaces = require('get-yarn-workspaces');
+// ! prontopro-scripts end
+
 const fs = require('fs');
 const path = require('path');
 const resolve = require('resolve');
@@ -130,13 +134,16 @@ module.exports = {
     // Automatically split vendor and commons
     // https://twitter.com/wSokra/status/969633336732905474
     // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
-    splitChunks: {
-      chunks: 'all',
-      name: false,
-    },
+    // ! prontopro-scripts start
+    // Need to remove splitChunks in order to make it work for us
+    // splitChunks: {
+    //   chunks: 'all',
+    //   name: false,
+    // },
     // Keep the runtime chunk seperated to enable long term caching
     // https://twitter.com/wSokra/status/969679223278505985
-    runtimeChunk: true,
+    runtimeChunk: false,
+    // ! prontopro-scripts end
   },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -230,47 +237,64 @@ module.exports = {
           // The preset includes JSX, Flow, and some ESnext features.
           {
             test: /\.(js|mjs|jsx|ts|tsx)$/,
-            include: paths.appSrc,
-            loader: require.resolve('babel-loader'),
-            options: {
-              customize: require.resolve(
-                'babel-preset-react-app/webpack-overrides'
-              ),
-              // @remove-on-eject-begin
-              babelrc: false,
-              configFile: false,
-              presets: [require.resolve('babel-preset-react-app')],
-              // Make sure we have a unique cache identifier, erring on the
-              // side of caution.
-              // We remove this when the user ejects because the default
-              // is sane and uses Babel options. Instead of options, we use
-              // the react-scripts and babel-preset-react-app versions.
-              cacheIdentifier: getCacheIdentifier('development', [
-                'babel-plugin-named-asset-import',
-                'babel-preset-react-app',
-                'react-dev-utils',
-                'react-scripts',
-              ]),
-              // @remove-on-eject-end
-              plugins: [
-                [
-                  require.resolve('babel-plugin-named-asset-import'),
-                  {
-                    loaderMap: {
-                      svg: {
-                        ReactComponent: '@svgr/webpack?-prettier,-svgo![path]',
+            // ! prontopro-scripts start
+            // We want to include all our workspaces
+            // and use our nativeNullLoader
+            //
+            include: [paths.appSrc].concat(
+              getWorkspaces(paths.appPath).map(directory =>
+                path.resolve(directory)
+              )
+            ),
+            use: [
+              { loader: require.resolve('./prontopro/nativeNullLoader') },
+              { loader: require.resolve('./prontopro/stripE2ETargetsLoader') },
+              { loader: require.resolve('./prontopro/setEnvironmentLoader') },
+              {
+                loader: require.resolve('babel-loader'),
+                options: {
+                  customize: require.resolve(
+                    'babel-preset-react-app/webpack-overrides'
+                  ),
+                  // @remove-on-eject-begin
+                  babelrc: false,
+                  configFile: false,
+                  presets: [require.resolve('babel-preset-react-app')],
+                  // Make sure we have a unique cache identifier, erring on the
+                  // side of caution.
+                  // We remove this when the user ejects because the default
+                  // is sane and uses Babel options. Instead of options, we use
+                  // the react-scripts and babel-preset-react-app versions.
+                  cacheIdentifier: getCacheIdentifier('development', [
+                    'babel-plugin-named-asset-import',
+                    'babel-preset-react-app',
+                    'react-dev-utils',
+                    'react-scripts',
+                  ]),
+                  // @remove-on-eject-end
+                  plugins: [
+                    [
+                      require.resolve('babel-plugin-named-asset-import'),
+                      {
+                        loaderMap: {
+                          svg: {
+                            ReactComponent:
+                              '@svgr/webpack?-prettier,-svgo![path]',
+                          },
+                        },
                       },
-                    },
-                  },
-                ],
-              ],
-              // This is a feature of `babel-loader` for webpack (not Babel itself).
-              // It enables caching results in ./node_modules/.cache/babel-loader/
-              // directory for faster rebuilds.
-              cacheDirectory: true,
-              // Don't waste time on Gzipping the cache
-              cacheCompression: false,
-            },
+                    ],
+                  ],
+                  // This is a feature of `babel-loader` for webpack (not Babel itself).
+                  // It enables caching results in ./node_modules/.cache/babel-loader/
+                  // directory for faster rebuilds.
+                  cacheDirectory: true,
+                  // Don't waste time on Gzipping the cache
+                  cacheCompression: false,
+                },
+              },
+            ],
+            // ! prontopro-scripts end
           },
           // Process any JS outside of the app with Babel.
           // Unlike the application JS, we only compile the standard ES features.

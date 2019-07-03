@@ -56,8 +56,12 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
   process.exit(1);
 }
 
+// ! prontopro-scripts start
+const PP_DEFAULT_PORT = parseInt(process.env.PP_PORT, 10) || 3000;
+
 // Tools like Cloud9 rely on this.
-const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3000;
+const DEFAULT_PORT = parseInt(process.env.PORT, 10) || PP_DEFAULT_PORT;
+// ! prontopro-scripts end
 const HOST = process.env.HOST || '0.0.0.0';
 
 if (process.env.HOST) {

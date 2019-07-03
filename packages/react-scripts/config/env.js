@@ -68,9 +68,15 @@ process.env.NODE_PATH = (process.env.NODE_PATH || '')
 // injected into the application via DefinePlugin in Webpack configuration.
 const REACT_APP = /^REACT_APP_/i;
 
+// ! prontopro-scripts start
+const PP_MFE = /^PP_/i;
+// ! prontopro-scripts end
+
 function getClientEnvironment(publicUrl) {
   const raw = Object.keys(process.env)
-    .filter(key => REACT_APP.test(key))
+    // ! prontopro-scripts start
+    .filter(key => REACT_APP.test(key) || PP_MFE.test(key))
+    // ! prontopro-scripts end
     .reduce(
       (env, key) => {
         env[key] = process.env[key];
