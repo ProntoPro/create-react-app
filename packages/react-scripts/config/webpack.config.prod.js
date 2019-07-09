@@ -56,7 +56,7 @@ const publicUrl = publicPath.slice(0, -1);
 const env = getClientEnvironment(publicUrl);
 
 // ! prontopro-scripts start
-const microfrontendNeedsHtml = env.raw.PP_HTML !== 'false';
+const microfrontendNeedsHtml = env.raw.PP_DELIVER_HTML === 'true';
 // ! prontopro-scripts end
 
 // Assert this just to be safe.

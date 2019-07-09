@@ -52,6 +52,10 @@ const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
+// ! prontopro-scripts start
+const javaScriptShouldBeInjected = env.raw.PP_INJECT_JS === 'true';
+// ! prontopro-scripts end
+
 // common function to get style loaders
 const getStyleLoaders = (cssOptions, preProcessor) => {
   const loaders = [
@@ -401,7 +405,9 @@ module.exports = {
   plugins: [
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
-      inject: true,
+      // ! prontopro-scripts start
+      inject: javaScriptShouldBeInjected,
+      // ! prontopro-scripts end
       template: paths.appHtml,
     }),
     // Makes some environment variables available in index.html.
