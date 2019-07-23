@@ -19,12 +19,6 @@ const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 
 const envPublicUrl = process.env.PUBLIC_URL;
 // ! prontopro-scripts start
-if (!process.env.PP_ENVIRONMENT) {
-  throw new Error(
-    'No environment found. Please set a "PP_ENVIRONMENT" env var.'
-  );
-}
-
 const envBuildFolderName = process.env.PP_ENVIRONMENT
   ? `build_${process.env.PP_ENVIRONMENT}`
   : 'build';
