@@ -69,6 +69,11 @@ process.env.NODE_PATH = (process.env.NODE_PATH || '')
 const REACT_APP = /^REACT_APP_/i;
 
 // ! prontopro-scripts start
+if (!process.env.PP_ENVIRONMENT) {
+  throw new Error(
+    'No environment found. Please set a "PP_ENVIRONMENT" env var.'
+  );
+}
 const PP_MFE = /^PP_/i;
 // ! prontopro-scripts end
 
