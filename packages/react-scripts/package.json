@@ -1,6 +1,6 @@
 {
   "name": "@prontopro/react-scripts",
-  "version": "2.1.1-prontopro3",
+  "version": "2.1.1-prontopro4",
   "description": "ProntoPro configuration and scripts for Create React App.",
   "repository": "facebook/create-react-app",
   "license": "MIT",
@@ -24,7 +24,7 @@
   },
   "types": "./lib/react-app.d.ts",
   "dependencies": {
-    "@babel/core": "7.1.0",
+    "@babel/core": "7.5.5",
     "@svgr/webpack": "2.4.1",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "9.0.0",
