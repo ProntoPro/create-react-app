@@ -12,6 +12,6 @@ pipeline:
       - NPM_TOKEN
     when:
       branch:
-        - prontopro-react-scripts@2.1.1
+        - prontopro-react-scripts@3.0.1
       event:
         - tag

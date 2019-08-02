@@ -8,6 +8,10 @@
 // @remove-on-eject-end
 'use strict';
 
+// ! prontopro-scripts start
+const getWorkspaces = require('get-yarn-workspaces');
+// ! prontopro-scripts end
+
 const fs = require('fs');
 const isWsl = require('is-wsl');
 const path = require('path');
@@ -77,6 +81,16 @@ module.exports = function(webpackEnv) {
     : isEnvDevelopment && '';
   // Get environment variables to inject into our app.
   const env = getClientEnvironment(publicUrl);
+
+  // ! prontopro-scripts start
+  const javascriptShouldBeInjected = isEnvProduction
+    ? false
+    : env.raw.PP_INJECT_JS === 'true';
+
+  const microfrontendNeedsHtml = isEnvProduction
+    ? env.raw.PP_DELIVER_HTML === 'true'
+    : true;
+  // ! prontopro-scripts end
 
   // common function to get style loaders
   const getStyleLoaders = (cssOptions, preProcessor) => {
@@ -164,9 +178,9 @@ module.exports = function(webpackEnv) {
       pathinfo: isEnvDevelopment,
       // There will be one main bundle, and one file per asynchronous chunk.
       // In development, it does not produce real files.
-      filename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].js'
-        : isEnvDevelopment && 'static/js/bundle.js',
+      // ! prontopro-scripts start
+      filename: 'static/js/bundle.js',
+      // ! prontopro-scripts end
       // TODO: remove this when upgrading to webpack 5
       futureEmitAssets: true,
       // There are also additional JS chunk files if you use code splitting.
@@ -253,13 +267,18 @@ module.exports = function(webpackEnv) {
       // Automatically split vendor and commons
       // https://twitter.com/wSokra/status/969633336732905474
       // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
-      splitChunks: {
-        chunks: 'all',
-        name: false,
-      },
+      // ! prontopro-scripts start
+      // Need to remove splitChunks in order to make it work for us
+      // splitChunks: {
+      //   chunks: 'all',
+      //   name: false,
+      // },
+      // ! prontopro-scripts end
       // Keep the runtime chunk separated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985
-      runtimeChunk: true,
+      // ! prontopro-scripts start
+      runtimeChunk: false,
+      // ! prontopro-scripts end
     },
     resolve: {
       // This allows you to set a fallback for where Webpack should look for modules.
@@ -351,52 +370,67 @@ module.exports = function(webpackEnv) {
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
-              include: paths.appSrc,
-              loader: require.resolve('babel-loader'),
-              options: {
-                customize: require.resolve(
-                  'babel-preset-react-app/webpack-overrides'
-                ),
-                // @remove-on-eject-begin
-                babelrc: false,
-                configFile: false,
-                presets: [require.resolve('babel-preset-react-app')],
-                // Make sure we have a unique cache identifier, erring on the
-                // side of caution.
-                // We remove this when the user ejects because the default
-                // is sane and uses Babel options. Instead of options, we use
-                // the react-scripts and babel-preset-react-app versions.
-                cacheIdentifier: getCacheIdentifier(
-                  isEnvProduction
-                    ? 'production'
-                    : isEnvDevelopment && 'development',
-                  [
-                    'babel-plugin-named-asset-import',
-                    'babel-preset-react-app',
-                    'react-dev-utils',
-                    'react-scripts',
-                  ]
-                ),
-                // @remove-on-eject-end
-                plugins: [
-                  [
-                    require.resolve('babel-plugin-named-asset-import'),
-                    {
-                      loaderMap: {
-                        svg: {
-                          ReactComponent: '@svgr/webpack?-svgo,+ref![path]',
+              // ! prontopro-scripts start
+              include: [paths.appSrc].concat(
+                getWorkspaces(paths.appPath).map(directory =>
+                  path.resolve(directory)
+                )
+              ),
+              use: [
+                { loader: require.resolve('./prontopro/nativeNullLoader') },
+                {
+                  loader: require.resolve('./prontopro/stripE2ETargetsLoader'),
+                },
+                { loader: require.resolve('./prontopro/setEnvironmentLoader') },
+                {
+                  loader: require.resolve('babel-loader'),
+                  options: {
+                    customize: require.resolve(
+                      'babel-preset-react-app/webpack-overrides'
+                    ),
+                    // @remove-on-eject-begin
+                    babelrc: false,
+                    configFile: false,
+                    presets: [require.resolve('babel-preset-react-app')],
+                    // Make sure we have a unique cache identifier, erring on the
+                    // side of caution.
+                    // We remove this when the user ejects because the default
+                    // is sane and uses Babel options. Instead of options, we use
+                    // the react-scripts and babel-preset-react-app versions.
+                    cacheIdentifier: getCacheIdentifier(
+                      isEnvProduction
+                        ? 'production'
+                        : isEnvDevelopment && 'development',
+                      [
+                        'babel-plugin-named-asset-import',
+                        'babel-preset-react-app',
+                        'react-dev-utils',
+                        'react-scripts',
+                      ]
+                    ),
+                    // @remove-on-eject-end
+                    plugins: [
+                      [
+                        require.resolve('babel-plugin-named-asset-import'),
+                        {
+                          loaderMap: {
+                            svg: {
+                              ReactComponent: '@svgr/webpack?-svgo,+ref![path]',
+                            },
+                          },
                         },
-                      },
-                    },
-                  ],
-                ],
-                // This is a feature of `babel-loader` for webpack (not Babel itself).
-                // It enables caching results in ./node_modules/.cache/babel-loader/
-                // directory for faster rebuilds.
-                cacheDirectory: true,
-                cacheCompression: isEnvProduction,
-                compact: isEnvProduction,
-              },
+                      ],
+                    ],
+                    // This is a feature of `babel-loader` for webpack (not Babel itself).
+                    // It enables caching results in ./node_modules/.cache/babel-loader/
+                    // directory for faster rebuilds.
+                    cacheDirectory: true,
+                    cacheCompression: isEnvProduction,
+                    compact: isEnvProduction,
+                  },
+                },
+              ],
+              // ! prontopro-scripts end
             },
             // Process any JS outside of the app with Babel.
             // Unlike the application JS, we only compile the standard ES features.
@@ -524,43 +558,57 @@ module.exports = function(webpackEnv) {
     },
     plugins: [
       // Generates an `index.html` file with the <script> injected.
-      new HtmlWebpackPlugin(
-        Object.assign(
-          {},
-          {
-            inject: true,
-            template: paths.appHtml,
-          },
-          isEnvProduction
-            ? {
-                minify: {
-                  removeComments: true,
-                  collapseWhitespace: true,
-                  removeRedundantAttributes: true,
-                  useShortDoctype: true,
-                  removeEmptyAttributes: true,
-                  removeStyleLinkTypeAttributes: true,
-                  keepClosingSlash: true,
-                  minifyJS: true,
-                  minifyCSS: true,
-                  minifyURLs: true,
+      // ! prontopro-scripts start
+      ...(microfrontendNeedsHtml
+        ? [
+            new HtmlWebpackPlugin(
+              Object.assign(
+                {},
+                {
+                  inject: javascriptShouldBeInjected,
+                  template: paths.appHtml,
                 },
-              }
-            : undefined
-        )
-      ),
+                isEnvProduction
+                  ? {
+                      minify: {
+                        removeComments: true,
+                        collapseWhitespace: true,
+                        removeRedundantAttributes: true,
+                        useShortDoctype: true,
+                        removeEmptyAttributes: true,
+                        removeStyleLinkTypeAttributes: true,
+                        keepClosingSlash: true,
+                        minifyJS: true,
+                        minifyCSS: true,
+                        minifyURLs: true,
+                      },
+                    }
+                  : undefined
+              )
+            ),
+          ]
+        : []),
+      // ! prontopro-scripts end
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
+      // ! prontopro-scripts start
+      ...(microfrontendNeedsHtml &&
+      // ! prontopro-scripts end
       isEnvProduction &&
-        shouldInlineRuntimeChunk &&
-        new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime~.+[.]js/]),
+      shouldInlineRuntimeChunk
+        ? [new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime~.+[.]js/])]
+        : []),
       // Makes some environment variables available in index.html.
       // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
       // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
       // In production, it will be an empty string unless you specify "homepage"
       // in `package.json`, in which case it will be the pathname of that URL.
       // In development, this will be an empty string.
-      new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
+      // ! prontopro-scripts start
+      ...(microfrontendNeedsHtml
+        ? [new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw)]
+        : []),
+      // ! prontopro-scripts end
       // This gives some necessary context to module not found errors, such as
       // the requesting resource.
       new ModuleNotFoundPlugin(paths.appPath),
