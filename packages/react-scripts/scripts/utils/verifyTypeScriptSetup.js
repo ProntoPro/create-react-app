@@ -122,7 +122,9 @@ function verifyTypeScriptSetup() {
       reason: 'to match webpack resolution',
     },
     resolveJsonModule: { value: true, reason: 'to match webpack loader' },
-    isolatedModules: { value: true, reason: 'implementation limitation' },
+    // ! prontopro-scripts start
+    // isolatedModules: { value: true, reason: 'implementation limitation' },
+    // ! prontopro-scripts start
     noEmit: { value: true },
     jsx: {
       parsedValue: ts.JsxEmit.Preserve,
