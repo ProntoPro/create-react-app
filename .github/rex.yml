@@ -3,7 +3,6 @@ labels:
     - "status/ON-HOLD"
     - "status/WIP"
   requirements:
-    - "area/"
     - "kind/"
-    - "tribe/"
+    - "squad/"
     - "status/OK-TO-MERGE"

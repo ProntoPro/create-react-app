@@ -71,19 +71,12 @@ branches:
           - teamleaders
 
 labels:
-  - name: "tribe/CORE :dart:"
+  - name: "squad/CONSUMER"
     color: b0bec5
-  - name: "tribe/GROWTH :chart_with_upwards_trend:"
+  - name: "squad/GROWTH"
     color: b0bec5
-
-  - name: area/WEB
-    color: fef2c0
-  - name: area/ANDROID
-    color: fef2c0
-  - name: area/IOS
-    color: fef2c0
-  - name: area/TECH
-    color: fef2c0
+  - name: "squad/MERCHANT"
+    color: b0bec5
 
   - name: kind/RELEASE
     color: 01deff
